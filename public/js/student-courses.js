@@ -11,16 +11,17 @@ $(document).ready(
         url: `${url[0]}//${url[2]}/api/user/student/courses`,
         method: "GET",
         success: (response) => {
-    
+            console.log(response.data);
+            $("#stu-name").text(`Courses for ${response.data.first_name} ${response.data.last_name}`);
           //looping thru array of objects
-          response.data.forEach(course => {
+          response.data.Courses.forEach(course => {
             const crsContainer = $("<div>");
             //adding classes to container
             crsContainer.addClass("column column-block filter-simple-item current lesson-card");
             crsContainer.attr("data-crsd", course.id);
             //create <a> tag
             const crsATag = $("<a>");
-            crsATag.attr("href", `/course?id=${course.id}`);
+            crsATag.attr("href", `/lesson?id=${course.Users_Courses.courseId}`);
             //create img tag
             const crsImg = $("<img>");
             //attrs and classes for img
@@ -44,7 +45,7 @@ $(document).ready(
             crsContainer.append(crsATag);
     
             //appending to existing html
-            $(".courses-block").append(crsContainer);
+            $("#courses-block").append(crsContainer);
           });
         }
       })
