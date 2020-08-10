@@ -16,4 +16,9 @@ module.exports = (app) => {
 
     //Defining test routes
     app.get('/api/test/user', JwtTokenValidator.fnVerifyToken, authController.userContent);
+
+    //token validation only
+    app.get("/api/auth/token", JwtTokenValidator.fnVerifyToken, authController.tokenValidation);
+
+
 }

@@ -125,34 +125,53 @@ $(".filter-simple-button").click(function() {
       });
     })
 
+    $("#hmpg-instructor").on("click", () => {
+      redirFromHome("instructors");
+    });
+
+    $("#hmpg-student").on("click", () => {
+      redirFromHome("students");
+    });
+
     validateLogin()
     function validateLogin(){
       let token = localStorage.getItem("Token")
       if (location.pathname !== '/' && !token){
         window.location.href = "/";
-
+        return;
       }
+      $.ajaxSetup({
+        headers:{'x-access-token': token
+      }});
+      return token;
+  }
+
+  function redirFromHome(viewName){
+    //1. check for token
+    //2. if token, validate
+    //if token valid -> load instructors page
+    const usrToken = validateLogin();
+    if (usrToken) {
+      authToken(viewName);
     }
+  }
 
-    //Function to authenticate Token
-    function authToken(str){
-      $.ajax({
-        // url: location.hostname + "/api/auth/signup",
-        url: "http://localhost:8000/api/auth/token",
-        method: "POST",
-        data: {
-              "token": str,
-            },
-        success: (response) =>{
-          if (response.auth){
-            return true
-          } else {
-            return false
-
-          }
+  //Function to authenticate Token
+  function authToken(viewName){
+    const url = window.location.href.split("/");
+    $.ajax({
+      // url: location.hostname + "/api/auth/signup",
+      url: `${url[0]}//${url[2]}/api/auth/token`, 
+      method: "GET",
+      success: (response) =>{
+        if (response.auth){
+          window.location.href = viewName;
+        } else {
+          console.log("Token not valid.");
         }
-      });
-    }
+      }
+    });
+  }
 
   /*Function to create verify password
   pwd_create.onfocus = function() {

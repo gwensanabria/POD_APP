@@ -19,8 +19,14 @@ $(document).ready(
         success: (response) => {
             console.log(response.data);
 
+
+
           //looping thru array of objects
           response.data.forEach(crsStu => {
+            const courseSel = $("<option>");
+            courseSel.attr("value", crsStu.id);
+            courseSel.text(crsStu.course_name);
+            $("#stuCourse").append(courseSel);
             crsStu.Users.forEach(user => {
                 const trow = $("<tr>");
                 //adding classes to container
