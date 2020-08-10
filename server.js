@@ -7,7 +7,7 @@
 const express = require("express");
 var exphbs  = require('express-handlebars');
 const sequelize_fixtures = require("sequelize-fixtures");
-require("custom-env").env("dev"); //env vars for development
+require("custom-env").env("production"); //env vars for development
 
 
 //TODO: Consider adding CORS as extra layer of security

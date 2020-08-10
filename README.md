@@ -3,6 +3,7 @@
 Online Learning App. 
 
 ## User Story
+
 //Student
 Due to Covid19 school will be online this coming fall. As a student I want a platform on which I can attend my regular classes
 -As a user I want to to receive an email from my teacher with a link that leads me to the class portal when I click on it
