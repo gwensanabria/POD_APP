@@ -148,6 +148,8 @@ $(document).mouseup(function (e) {
     let fname = $("#stuFirst").val()
     let lname = $("#stuLast").val()
     let email = $("#stuMail").val()
+    let crsid = $("#stuCourse").val()
+    console.log("course id", crsid);
     let pwd = $("#stuPwd").val() 
     //Ajax post call goes here 
     console.log(fname, lname, email, pwd)  
@@ -161,7 +163,8 @@ $(document).mouseup(function (e) {
             "last_name": lname,
             "email": email,
             "role": "STUDENT",
-            "password": pwd
+            "password": pwd,
+            "crsid": crsid
           },
       success: (response) =>{
         console.log("my response", response);

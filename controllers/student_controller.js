@@ -8,22 +8,22 @@ exports.Users_Courses = (req, res) => {
     console.log(
         `${
           process.env.APP_ENV === "development"
-            ? "===== Returning User Courses ====="
+            ? "===== Returning Student Courses ====="
             : ""
         }`
       );
 
-      db.Course.findAll({
+      db.User.findOne({
         where: {
-            user_id: req.userId 
+            id: req.userId 
         },
-        attributes: ["id", "course_name", "subject", "createdAt", "updatedAt"],
+        attributes: ["id", "first_name", "last_name", "createdAt", "updatedAt"],
         include: [{
-            model: db.User,
-            attributes: ["first_name", "last_name"],
+            model: db.Course,
+            attributes: ["course_name", "subject", "user_id"],
             through: {
                 model: db.Users_Courses,
-                attributes: ["isCompleted", "completedAt"],
+                attributes: ["courseId", "userId", "isCompleted", "completedAt"],
             }
         }]
     }).then((courseData) => {

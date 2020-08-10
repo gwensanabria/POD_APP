@@ -10,6 +10,7 @@ const config = require("../config/config.json"); // only in case there is no .en
 const nodemailer = require("nodemailer"); //pkg for sending registration email
 const User = db.User;
 const Role = db.Role;
+const Course = db.Course;
 const SECRET = process.env.SECRET || config.development.secret;
 //calling symbol based operators from Sequelize
 const Op = db.Sequelize.Op;
@@ -44,54 +45,62 @@ exports.signup = (req, res) => {
       })
         .then((roles) => {
           user.setRoles(roles).then( () => {
-            //Send registration email.
-            //output string html
-            const emailHtml = `
-            <h3>Hello, ${req.body.first_name.toUpperCase()}</h3>
-            <p>One of your Instructors has created an account for our E-Learning App: POD.</p>
-            <p>Below you can find your account details:</p>
-            <ul>
-              <li>Email: ${req.body.email}</li>
-              <li>Password: ${req.body.password}</li>
-            </ul>
-            <p>Link to the Learning App: <a href="http://localhost:8000"></a></p>
-            <h4>Happy Learning!</h4>
-            <p>POD Learning App Support Team</p>
-            `;
-            //NODE MAILER SECTION
-            //===========================
-            // create reusable transporter object using the SMTP transport
-            let transporter = nodemailer.createTransport({
-              host: "gator4144.hostgator.com",
-              port: 465,
-              secure: true, 
-              auth: {
-                user: "test@nxtlevelbeauty.com", // user
-                pass: process.env.EMAIL_PASS || config.development.secret, // password
-              },
-              tls: {
-                rejectUnauthorized: false
+            Course.findOne({
+              where: {
+                id: req.body.crsid
               }
-            });
+            }).then((course) => {
+              user.setCourses(course).then( () => {
+                //Send registration email.
+                //output string html
+                const emailHtml = `
+                <h3>Hello, ${req.body.first_name.toUpperCase()}</h3>
+                <p>One of your Instructors has created an account for our E-Learning App: POD.</p>
+                <p>Below you can find your account details:</p>
+                <ul>
+                  <li>Email: ${req.body.email}</li>
+                  <li>Password: ${req.body.password}</li>
+                </ul>
+                <p>Link to the Learning App: <a href="http://localhost:8000"></a></p>
+                <h4>Happy Learning!</h4>
+                <p>POD Learning App Support Team</p>
+                `;
+                //NODE MAILER SECTION
+                //===========================
+                // create reusable transporter object using the SMTP transport
+                let transporter = nodemailer.createTransport({
+                  host: "gator4144.hostgator.com",
+                  port: 465,
+                  secure: true, 
+                  auth: {
+                    user: "test@nxtlevelbeauty.com", // user
+                    pass: process.env.EMAIL_PASS || config.development.secret, // password
+                  },
+                  tls: {
+                    rejectUnauthorized: false
+                  }
+                });
 
-            //setup email data
-            let mailOptions = {
-              from: '"POD E-Learning" <test@nxtlevelbeauty.com>', // sender address
-              to: req.body.email, // list of receivers
-              subject: "Welcome to POD E-Learning", // Subject line
-              text: "Welcome to POD E-Learning", // plain text body
-              html: emailHtml, // html body
-            };
+                //setup email data
+                let mailOptions = {
+                  from: '"POD E-Learning" <test@nxtlevelbeauty.com>', // sender address
+                  to: req.body.email, // list of receivers
+                  subject: "Welcome to POD E-Learning", // Subject line
+                  text: "Welcome to POD E-Learning", // plain text body
+                  html: emailHtml, // html body
+                };
 
-            // send mail with defined transport object
-            transporter.sendMail(mailOptions, (error, info) => {
-              if(error) return console.log(error);
-              console.log("Message sent: %s", info.messageId);
-              // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
-              res.status(200).send("User registered successfully!");
-            });
-            //===========================
-          });
+                // send mail with defined transport object
+                transporter.sendMail(mailOptions, (error, info) => {
+                  if(error) return console.log(error);
+                  console.log("Message sent: %s", info.messageId);
+                  // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
+                  res.status(200).send("User registered successfully!");
+                });
+                //===========================
+              });
+              })
+            })
         })
         .catch((err) => {
           res.status(500).send("Error -> " + err);
@@ -189,3 +198,7 @@ exports.userContent = (req, res) => {
       res.status(500).send(`Error Retrieving user's information -> ${err}`);
   });
 }
+
+exports.tokenValidation = (req, res) => {
+  if (req.userId) res.status(200).json({"auth": true});
+} 
